@@ -1,0 +1,77 @@
+﻿@{
+    Page.Title = "Add User";
+    Layout ="~/_LayoutMain.cshtml";      
+
+    var db = Database.Open("Card Game");
+
+    Validation.RequireField("username", "You must enter a username");
+    Validation.RequireField("password", "You must enter a password");
+    Validation.Add("username", Validator.StringLength(16, 3, "Your username must be between 3 and 16 characters in length"));
+    Validation.Add("password", Validator.StringLength(16, 5, "Your password must be between 5 and 8 characters in length"));
+
+    var username = "";
+    var password = "";
+
+    var selectUsers = "SELECT * FROM Accounts";
+
+    if(IsPost){
+        username = Request.Form["username"];
+        password = Request.Form["password"];
+
+
+       foreach(var user in db.Query("SELECT * FROM Accounts"))
+       {
+           if(user.Username == username)
+           {
+               Validation.AddFormError("Username is taken. Please try Again");
+           }
+       }
+
+       if(Validation.IsValid()){
+
+            var insertCommand = "INSERT INTO Accounts (Username, Password) Values(@0, @1)";
+            db.Execute(insertCommand, username, password);
+
+            DateTime date = DateTime.Today;
+            var selectPlayer = "SELECT * FROM Accounts WHERE Username = @0";
+            var player = db.QuerySingle(selectPlayer, username);
+            
+            var incorrect = 0;
+            var correct = 0;
+            var curDate = date.ToShortDateString();
+            var playerID = player.ID;
+
+            Session["Player"] = playerID;
+
+            insertCommand = "INSERT INTO Leaderboards (PlayerID, Date) Values(@0, @1)";
+            db.Execute(insertCommand, playerID, curDate);
+
+            Response.Redirect("~/Game");
+       }
+    }
+}
+  <h1>Add New User</h1>
+  @Html.ValidationSummary()
+  <form method="post">
+    <fieldset>
+      <legend>User Information</legend>
+      <p><label for="username">Username:</label>
+         <input type="text" name="username" value="@Request.Form["username"]" />
+          @Html.ValidationMessage("username")
+      </p>
+
+      <p><label for="password">Password:</label>
+         <input type="text" name="password" value="@Request.Form["password"]" />
+         @Html.ValidationMessage("password")
+      </p>
+
+      <p><input type="submit" name="buttonSubmit" value="Register" /></p>
+    </fieldset>
+  </form>
+
+  <p><button id="buttonHome">Home</button>
+        <script type="text/javascript">
+            document.getElementById("buttonHome").onclick = function () {
+                location.href = "http://cardgame.azurewebsites.net/";
+            };
+        </script></p>

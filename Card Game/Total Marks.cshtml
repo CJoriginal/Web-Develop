@@ -1,0 +1,11 @@
+﻿@{
+    var db = Database.Open("Card Game");
+    
+    var data = db.Query("SELECT PlayerID, Correct, Incorrect FROM Leaderboards");
+
+    var myChart = new Chart(width: 600, height: 400, theme: ChartTheme.Blue) 
+       .AddTitle("Distribution of Correct and Incorrect Marks")
+       .AddLegend("Key") 
+       .DataBindTable(data, "PlayerID")
+       .Write();
+}

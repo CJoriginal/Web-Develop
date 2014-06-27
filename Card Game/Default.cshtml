@@ -1,0 +1,39 @@
+﻿@{
+    Page.Title = "Home";
+    Layout ="~/_LayoutMain.cshtml";      
+}
+        <h2>Play!</h2>
+
+        <br>To Play, choose your Account Type<br/>
+        <p>
+            <button id="buttonRegistered">Registered User</button>
+            <script type="text/javascript">
+            document.getElementById("buttonRegistered").onclick = function () {
+                location.href = "http://cardgame.azurewebsites.net/Login";
+            };
+            </script>
+
+            <button id="buttonNew">New User</button>
+            <script type="text/javascript">
+            document.getElementById("buttonNew").onclick = function () {
+                location.href = "http://cardgame.azurewebsites.net/AddUser";
+            };
+            </script>
+        </p>
+
+        <h2>Leaderboard and Statistics</h2>
+        <p>
+            <button id="buttonLeaderboard">Leaderboard</button>
+            <script type="text/javascript">
+            document.getElementById("buttonLeaderboard").onclick = function () {
+                location.href = "http://cardgame.azurewebsites.net/Leaderboard";
+            };
+            </script>
+
+            <button id="buttonStats">Statistics</button>
+            <script type="text/javascript">
+            document.getElementById("buttonStats").onclick = function () {
+                location.href = "http://cardgame.azurewebsites.net/Statistics";
+            };
+            </script>
+        </p>

@@ -1,0 +1,20 @@
+﻿@{
+    var db = Database.Open("Card Game");
+    
+    var data = db.Query("SELECT PlayerID, Correct, Incorrect FROM Leaderboards");
+    var correct = 0;
+    var incorrect = 0;
+
+    foreach(var row in data){
+        correct += row.Correct;
+        incorrect += row.Incorrect;
+    }
+
+    var myChart = new Chart(width: 600, height: 400, theme: ChartTheme.Blue) 
+       .AddTitle("Distribution of Correct and Incorrect Marks")
+       .AddLegend("Key")
+       .AddSeries(chartType: "Pie",
+                    xValue: new[] {correct, incorrect},
+                    yValues: new[] {2,1})
+       .Write();
+}

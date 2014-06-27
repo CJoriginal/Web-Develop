@@ -1,0 +1,28 @@
+﻿@{
+    Page.Title = "Statistics";
+    Layout ="~/_LayoutMain.cshtml";
+}
+
+    <h2>Statistics</h2>
+    <div id="main">
+        <p>
+            <img src="Total Marks.cshtml" alt="Chart of Total Marks recored in game"/>
+            <img src="Incorrect vs Correct.cshtml" alt="Chart of Distribution of Mark Types"/>
+        </p>
+
+        <p>
+        <button id="buttonHome">Home</button>
+        <script type="text/javascript">
+            document.getElementById("buttonHome").onclick = function () {
+                location.href = "http://cardgame.azurewebsites.net/";
+            };
+        </script>
+
+        <button id="buttonLeaderboards">Leaderboards</button>
+        <script type="text/javascript">
+            document.getElementById("buttonLeaderboards").onclick = function () {
+            location.href = "http://cardgame.azurewebsites.net/Leaderboard";
+            };
+        </script>
+        </p>
+    </div>

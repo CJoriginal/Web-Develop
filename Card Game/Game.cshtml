@@ -1,0 +1,101 @@
+﻿@{
+    Page.Title = "Game";
+    Layout ="~/_LayoutGame.cshtml";
+
+    var id = "";
+
+    if(Session["ID"] != null)
+    {
+        id = Session["ID"].ToString();
+    }
+
+
+    if(Session["Player"] != null)
+    {
+        id = Session["Player"].ToString();
+    }
+
+    var player = UserObject.GetUser(int.Parse(id));
+
+    if(IsPost)
+    {
+        var db = Database.Open("Card Game");
+
+        var correct = Request.Form["correctNo"];
+        var incorrect = Request.Form["incorrectNo"];
+        var correctNew = int.Parse(correct);
+        var incorrectNew = int.Parse(incorrect);
+
+        var data = db.QuerySingle("SELECT Correct, Incorrect FROM Leaderboards WHERE PlayerID=" + player.PlayerID);
+
+        player.Correct = data.Correct;
+        player.Incorrect = data.Incorrect;
+
+        DateTime date = DateTime.Today;
+        var curDate = date.ToShortDateString();
+
+        var updateCommand ="";
+
+        if(correctNew > 0)
+        {
+            if(player.Correct < correctNew) // Update only if their score beats their previous score
+            {
+                updateCommand = "UPDATE Leaderboards SET Correct=@0, Incorrect=@1, Date=@2 WHERE PlayerID=@3";
+                db.Execute(updateCommand, correctNew, incorrectNew, curDate, player.PlayerID);
+            }
+            else // Update if the score is the same but fewer mistakes
+            {
+                if(player.Incorrect > incorrectNew) 
+                {
+                    updateCommand = "UPDATE Leaderboards SET Incorrect=@0, Date=@1 WHERE PlayerID=@2";
+                    db.Execute(updateCommand, incorrectNew, curDate, player.PlayerID);
+                }
+            }
+        }
+    }
+}
+    <input type="hidden" id="playerID" value="@player.PlayerID"></input>
+    <h2>Reaction Game</h2>
+    <div id="main">
+        <button id="buttonHome">Home</button>
+        <script type="text/javascript">
+            document.getElementById("buttonHome").onclick = function () {
+                location.href = "http://cardgame.azurewebsites.net/";
+            };
+        </script>
+
+        <button id="buttonLeaderboard">Leaderboard</button>
+        <script type="text/javascript">
+            document.getElementById("buttonLeaderboard").onclick = function () {
+            location.href = "http://cardgame.azurewebsites.net/Leaderboard";
+            };
+        </script>
+
+        <button id="buttonStatistics">Statistics</button>
+        <script type="text/javascript">
+             document.getElementById("buttonStatistics").onclick = function () {
+             location.href = "http://cardgame.azurewebsites.net/Statistics";
+             };
+        </script>
+    </div>
+
+    <div id="Text">
+        <p>Hi @player.Username !</p>
+        <span id="question" style="font-weight: bold;">Press Enter to Begin</span>
+
+        <script src="Scripts/canvas.js" type="text/javascript"></script>
+        <p>
+        <button id="buttonTrue" onclick="checkAnswer(0)">True</button>
+        <button id="buttonFalse" onclick="checkAnswer(1)">False</button>
+        </p>
+
+        <p>Time: <span id="countdown"></span></p>
+
+        <p>Correct: <span id="correct" style="font-weight: bold;">0</span></p>
+        <p>Incorrect: <span id="incorrect" style="font-weight: bold;">0</span></p>
+    </div>
+    
+    <form method="post" action="" id="datsend">
+        <input type="hidden" name="correctNo" id="correctNo"></input>
+        <input type="hidden" name="incorrectNo" id="incorrectNo"></input>
+    </form>

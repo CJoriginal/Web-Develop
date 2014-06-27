@@ -1,0 +1,24 @@
+﻿@functions {
+    public class User {
+        public int PlayerID {get;    set;}
+        public string Username {get;    set;}
+        public string Password {get;    set;}
+        public int  Correct{get; set;}
+        public int  Incorrect{get; set;}
+    }
+
+    public static User GetUser(int ID) {
+        var db = Database.Open("Card Game");
+        var selectQueryString = "SELECT Username, Password, ID FROM Accounts WHERE ID=" + @ID;
+        var data = db.Query(selectQueryString);
+        User user = new User();
+        foreach(var row in data)
+        {
+            user.Username = @row.Username;
+            user.Password = @row.Password;
+            user.PlayerID = @row.ID;
+        }
+
+        return user; 
+    }
+}

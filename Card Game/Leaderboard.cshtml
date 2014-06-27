@@ -1,0 +1,52 @@
+﻿@{
+    Page.Title = "Leaderboard";
+    Layout ="~/_LayoutMain.cshtml";         
+
+    var db = Database.Open("Card Game");
+    var selectQueryString = "SELECT * FROM Leaderboards ORDER BY Correct DESC";
+    var selectPlayer = "SELECT * FROM Accounts WHERE ID = @0";
+
+    var position = 0;
+ }
+
+   <h2>Leaderboard</h2>
+   <table>
+       <thead>
+           <tr>
+               <th>Position</th>
+               <th>Player</th>
+               <th>Correct Score</th>
+               <th>Incorrect Score</th>
+               <th>Date</th>
+           </tr>
+       </thead>
+       <tbody>
+           @foreach(var row in db.Query(selectQueryString)){
+            position++;
+            var player = db.QuerySingle(selectPlayer, row.ID);
+            DateTime date = row.Date;
+
+            <tr>
+               <td>@position</td>   
+               <td>@player.Username</td>
+               <td>@row.Correct</td>
+                <td>@row.Incorrect</td>
+               <td>@date.ToShortDateString()</td>
+            </tr>
+           }
+       </tbody>
+   </table>
+
+   <button id="buttonHome">Home</button>
+   <script type="text/javascript">
+            document.getElementById("buttonHome").onclick = function () {
+                location.href = "http://cardgame.azurewebsites.net/";
+            };
+        </script>
+
+   <button id="buttonStatistics">Statistics</button>
+   <script type="text/javascript">
+                    document.getElementById("buttonStatistics").onclick = function () {
+                        location.href = "http://cardgame.azurewebsites.net/Statistics";
+                    };
+                </script>

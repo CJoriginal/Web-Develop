@@ -1,0 +1,63 @@
+﻿@{
+    Page.Title = "Login";
+    Layout ="~/_LayoutMain.cshtml";      
+
+    var db = Database.Open("Card Game") ;
+    var selectCommand = "SELECT * FROM Accounts WHERE Username = @0";
+
+    Validation.RequireField("password", "Please enter a password.");
+
+    if(!Request["buttonSubmit"].IsEmpty())
+    {
+        if(!Request.QueryString["searchUser"].IsEmpty()) 
+        {
+            var user = Request.QueryString["searchUser"];
+            var selectedData = db.QuerySingle(selectCommand, user);
+
+            if (selectedData != null)
+            {
+                if(Request.QueryString["passWord"] == selectedData.Password)
+                {
+                    Session["ID"] = selectedData.ID;
+
+                    Response.Redirect("~/Game");
+                }
+                else
+                {
+                    Validation.AddFormError("Entered password is incorrect.");
+                }
+            }
+            else
+            {
+                Validation.AddFormError("Username does not exist.");
+            }
+        }
+        else
+        {
+            Validation.AddFormError("Please enter an account name.");
+        }
+    }
+}
+
+      <h2>Login</h2>
+         @Html.ValidationSummary()
+      <form method="get">
+         <fieldset>
+      <legend>User Information</legend>
+        <p><label for="searchUser">Username</label>
+          <input type="text" name="searchUser" value="@Request.QueryString["searchUser"]">
+         <p><label for="passWord">Password:</label>
+            <input type="text" name="passWord">
+             @Html.ValidationMessage("password")
+         <p><input type="submit" name="buttonSubmit" value="Login" /></p>
+         </p>
+        </p>
+        </fieldset>
+        </form>
+
+        <button id="buttonHome">Home</button>
+        <script type="text/javascript">
+            document.getElementById("buttonHome").onclick = function () {
+                location.href = "http://cardgame.azurewebsites.net/";
+            };
+        </script>
